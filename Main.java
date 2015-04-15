@@ -5,7 +5,7 @@ public class Main {
 
 	public static void main(String[] args)  throws ClassNotFoundException, SQLException, ParseException {
 		Conn.connect();
-        Conn.writeDB();
+        Conn.reWriteDB();
         Conn.readUsersDB();
         Conn.getUsersWithoutBirthdate();
         Conn.readUsersDbLimit(5);

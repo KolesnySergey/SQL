@@ -25,7 +25,7 @@ public class Conn {
            statmt = conn.createStatement();
     }
     
-    public static void writeDB() throws SQLException, ParseException
+    public static void reWriteDB() throws SQLException, ParseException
     {
     	statmt.execute("DELETE FROM 'roles'");
     	statmt.execute("DELETE FROM sqlite_sequence WHERE name='roles'");
