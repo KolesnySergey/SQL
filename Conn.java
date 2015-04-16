@@ -15,13 +15,13 @@ public class Conn {
     public static Statement statmt;
     public static ResultSet resSet;
     
-    // --------ПОДКЛЮЧЕНИЕ К БАЗЕ ДАННЫХ--------
+    // --------РџРћР”РљР›Р®Р§Р•РќРР• Рљ Р‘РђР—Р• Р”РђРќРќР«РҐ--------
     public static void connect() throws ClassNotFoundException, SQLException 
     {
            conn = null;
            Class.forName("org.sqlite.JDBC");
            conn = DriverManager.getConnection("jdbc:sqlite:Authorization.s3db");
-           System.out.println("БД Подключена!");
+           System.out.println("Database connected!");
            statmt = conn.createStatement();
     }
     
@@ -31,33 +31,40 @@ public class Conn {
     	statmt.execute("DELETE FROM sqlite_sequence WHERE name='roles'");
     	statmt.execute("DELETE FROM 'users'");
     	statmt.execute("DELETE FROM sqlite_sequence WHERE name='users'");
-    	//Добавляем "роли"
-    	addRole("Администратор");
-    	addRole("Модератор");
-    	addRole("Пользователь");
-    	addRole("Редактор");
-    	addRole("Гл.редактор");
+    	//Dobavljaem "roli"
+    	addRole("Administrator");
+    	addRole("Moderator");
+    	addRole("User");
+    	addRole("Redaktor");
+    	addRole("Gl.redaktor");
     	
-    	//Добавляем пользователей
-		addUser("Admin","12345","Администратор", "11.11.1992", 1);
-		addUser("Ivan","123456","Иван", "12.11.1992", 2);
-		addUser("Gena","123451","Геннадий", "14.11.1990", 3);
-		addUser("Seva","123450","Сева", "01.01.1994", 4);
-		addUser("Onegin","123451","Евгений", "01.01.1985", 5);
-		addUser("Sniper","123452","Пушкин", "10.01.1990", 2);
-		addUser("Obana","123453","Обама", "01.01.1989", 3);
-		addUser("Putin","123454","Путин", "01.01.1988", 5);
-		addUser("Ivanov","123455","Иванов", "01.01.1987", 4);
-		addUser("Petrov","123457","Петров", "01.01.1986", 2);
-		addUser("Sidorov","123458","Сидоров", "01.01.1991", 2);
-		addUser("Vasya","1234580","Вася", "01.01.1992", 3);
+    	//Dobavljaem pol'zovatelej
+		addUser("Admin","12345","Administrator", "11.11.1992", 1);
+		addUser("Ivan","123456","Ivan", "12.11.1992", 2);
+		addUser("Gena","123451","Gennadij", "14.11.1990", 3);
+		addUser("Seva","123450","Seva", "01.01.1994", 4);
+		addUser("Onegin","123451","Evgenij", "01.01.1985", 5);
+		addUser("Sniper","123452","Pushkin", "10.01.1990", 2);
+		addUser("Obana","123453","Obama", "01.01.1989", 3);
+		addUser("Putin","123454","Putin", "01.01.1988", 5);
+		addUser("Ivanov","123455","Ivanov", "01.01.1987", 4);
+		addUser("Petrov","123457","Petrov", "01.01.1986", 2);
+		addUser("Sidorov","123458","Sidorov", "01.01.1991", 2);
+		addUser("Vasya","1234580","Vasja", "01.01.1992", 3);
 		addUser("Qwerty","1234581","Qwerty", "01.01.1941", 2);
 		addUser("User","123458","User", "01.01.1971", 5);
 		addUser("NotUser","123458","NotUser", "01.01.1961", 4);
 		addUser("NotUser1","123458","NotUser1", "", 4);
 		
-		System.out.println("Таблица \"roles\" заполнена");
-		System.out.println("Таблица \"users\" заполнена");
+		System.out.println("Tablica \"roles\" zapolnena");
+		System.out.println("Tablica \"users\" zapolnena");
+    }
+    
+    static void deleteUserById(int id) throws SQLException, ParseException
+    {
+    	System.out.println("After delete user #"+id+": ");
+    	statmt.execute("DELETE FROM users WHERE id = "+id);
+    	printAllUsers();
     }
     
     static void addUser(String login, String password, String username, String birthdate, Integer roleId) throws SQLException, ParseException
@@ -74,7 +81,7 @@ public class Conn {
     	}
     	catch(SQLException ex)
     	{
-    		System.out.println("Пользователь с таким логином уже существует! Текст ошибки: " + ex.getLocalizedMessage());
+    		System.out.println("User already exists! Message error: " + ex.getLocalizedMessage());
     	}
     }
     
@@ -86,7 +93,7 @@ public class Conn {
     	}
     	catch(SQLException ex)
     	{
-    		System.out.println("Роль с таким названием уже существует! Текст ошибки: " + ex.getLocalizedMessage());
+    		System.out.println("Role already exists! Message error: " + ex.getLocalizedMessage());
     	}
     }
     
@@ -96,35 +103,41 @@ public class Conn {
     	Date startDate = dateFormat.parse(start);
     	Date endDate = dateFormat.parse(end);
     	
-    	System.out.println("Список пользователей в диапазоне дат от "+start+" до "+end+": ");
+    	System.out.println("User list between "+start+" to "+end+": ");
     	resSet = statmt.executeQuery("SELECT * FROM users WHERE (birthdate BETWEEN '"+startDate+"' AND '"+endDate+"')");
     	printUsers();
     }
     
     public static void readUsersDbLimit(int limit) throws SQLException, ParseException
     {
-    	System.out.println(limit + " пользователей: ");
+    	System.out.println(limit + " users: ");
     	resSet = statmt.executeQuery("SELECT * FROM users LIMIT "+limit);
     	printUsers();
     }
     
     public static void readUsersDbLimitStart(int limit) throws SQLException, ParseException
     {
-    	System.out.println(limit + " пользователей начиная с 3-го: ");
+    	System.out.println(limit + " users from 3: ");
     	resSet = statmt.executeQuery("SELECT * FROM users LIMIT 3, "+limit);
     	printUsers();
     }
     
     public static void getUsersWithoutBirthdate() throws SQLException, ParseException 
     {
-    	System.out.println("Пользователи без даты рождения: ");
+    	System.out.println("Users list without birth date: ");
     	resSet = statmt.executeQuery("SELECT * FROM users WHERE birthdate = '" + null + "'");
     	printUsers();
     }
     
     public static void readUsersDB() throws SQLException, ParseException
     {
-    	System.out.println("Все пользователи: ");
+    	System.out.println("All users: ");
+    	resSet = statmt.executeQuery("SELECT * FROM users");
+    	printUsers();
+    }
+    
+    public static void printAllUsers() throws SQLException, ParseException
+    {
     	resSet = statmt.executeQuery("SELECT * FROM users");
     	printUsers();
     }
@@ -151,7 +164,7 @@ public class Conn {
 		    System.out.println("Role ID: "+roleId);
 		    System.out.println("----------------------------------------------------------------------------------");
 		}	
-		System.out.println("Таблица выведена");
+		System.out.println("Table showed!");
     }
     
      
@@ -161,7 +174,7 @@ public class Conn {
 			statmt.close();
 			resSet.close();
 			
-			System.out.println("Соединения закрыты");
+			System.out.println("Connection closed!");
 	   }
 
 

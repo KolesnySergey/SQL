@@ -11,6 +11,7 @@ public class Main {
         Conn.readUsersDbLimit(5);
         Conn.readUsersDbLimitStart(5);
         Conn.readUsersBdByDate("01.01.1992", "01.01.2014");
+        Conn.deleteUserById(10);
         Conn.closeDB();
 	}
 
